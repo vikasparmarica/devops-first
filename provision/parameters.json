@@ -1,0 +1,53 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerName": {
+            "value": "ecom-devops-cart"
+        },
+        "location": {
+            "value": "westeurope"
+        },
+        "imageType": {
+            "value": "Private"
+        },
+        "imageName": {
+            "value": "aa96containerregistry/vikasparmarica/devops-first:latest"
+        },
+        "osType": {
+            "value": "Linux"
+        },
+        "numberCpuCores": {
+            "value": "1"
+        },
+        "memory": {
+            "value": "0.5"
+        },
+        "restartPolicy": {
+            "value": "Never"
+        },
+        "imageRegistryLoginServer": {
+            "value": "aa96containerregistry.azurecr.io"
+        },
+        "imageUsername": {
+            "value": "aa96containerregistry"
+        },
+        "imagePassword": {
+            "value": "nrI7G7inz0upig+kWIVLPchKO9m058EJ"
+        },
+        "ipAddressType": {
+            "value": "Public"
+        },
+        "ports": {
+            "value": [
+                {
+                    "port": "80",
+                    "protocol": "TCP"
+                }
+            ]
+        },
+        "dnsNameLabel": {
+            "value": "ecom-cart"
+        }
+    }
+}
