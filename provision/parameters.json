@@ -12,7 +12,7 @@
             "value": "Private"
         },
         "imageName": {
-            "value": "myacr.azurecr.io/vikasparmarica/devops-first:latest"
+            "value": "aa96containerregistry.azurecr.io/vikasparmarica/devops-first:latest"
         },
         "osType": {
             "value": "Linux"
