@@ -1,7 +1,5 @@
 package com.azure.devops.first.controller;
 
-import com.azure.devops.first.model.User;
-import com.azure.devops.first.service.UserService;
 import com.azure.devops.first.util.CustomErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,87 +20,91 @@ public class RestApiController {
     private static final Logger logger = LoggerFactory.getLogger(RestApiController.class);
 
     @Autowired
-    private UserService userService;
+    private com.azure.devops.first.service.CartService cartService;
 
-    @RequestMapping(value = "/user/", method = RequestMethod.GET)
-    public ResponseEntity<List<User>> listAllUsers() {
-        List<User> users = userService.findAllUsers();
-        if (users.isEmpty()) {
+    @RequestMapping(value = "/cart/", method = RequestMethod.GET)
+    public ResponseEntity<List<com.azure.devops.first.model.Item>> listAllItems() {
+        List<com.azure.devops.first.model.Item> items = cartService.findAllItems();
+        if (items.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getUser(@PathVariable("id") String id) {
-        logger.info("Fetching User with id {}", id);
-        User user = userService.findById(id);
-        if (user == null) {
-            logger.info("User with id {} not found.", id);
-            return new ResponseEntity<>(new CustomErrorType("User with id " + id
+    @RequestMapping(value = "/cart/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getCart(@PathVariable("id") String id) {
+        logger.info("Fetching Cart with id {}", id);
+        com.azure.devops.first.model.Item item = cartService.findById(id);
+        if (item == null) {
+            logger.info("Cart with id {} not found.", id);
+            return new ResponseEntity<>(new CustomErrorType("Cart with id " + id
                     + " not found"), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
 
-    @RequestMapping(value = "/user/", method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
-        logger.info("Creating User : {}", user);
+    @RequestMapping(value = "/cart/", method = RequestMethod.POST)
+    public ResponseEntity<?> createCart(@RequestBody com.azure.devops.first.model.Item item, UriComponentsBuilder ucBuilder) {
+        logger.info("Creating Cart : {}", item);
 
-        if (userService.isUserExist(user)) {
-            logger.error("Unable to create. A User with name {} already exist", user.getName());
+        if (cartService.isItemExist(item)) {
+            logger.error("Unable to create. A Cart with name {} already exist", item.getName());
             return new ResponseEntity<>(new CustomErrorType(
-                    "Unable to create. A User with name " +
-                    user.getName() + " already exist."), HttpStatus.CONFLICT);
+                    "Unable to create. A Cart with name " +
+                    item.getName() + " already exist."), HttpStatus.CONFLICT);
         }
-        userService.saveUser(user);
+        item.setTotalPrice(item.getPrice() * item.getQuantity());
+        cartService.saveCart(item);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/api/user/{id}").buildAndExpand(user.getId()).toUri());
+        headers.setLocation(ucBuilder.path("/api/cart/{id}").buildAndExpand(item.getId()).toUri());
         return new ResponseEntity<String>(headers, HttpStatus.CREATED);
     }
 
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody User user) {
-        logger.info("Updating User with id {}", id);
+    @RequestMapping(value = "/cart/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateCart(@PathVariable("id") String id, @RequestBody com.azure.devops.first.model.Item item) {
+        logger.info("Updating Cart with id {}", id);
 
-        User currentUser = userService.findById(id);
+        com.azure.devops.first.model.Item currentItem = cartService.findById(id);
 
-        if (!userService.isUserExist(currentUser)) {
-            logger.error("Unable to update. User with id {} not found.", id);
-            return new ResponseEntity<>(new CustomErrorType("Unable to upate. User with id " + id + " not found."),
+        if (!cartService.isItemExist(currentItem)) {
+            logger.error("Unable to update. Cart with id {} not found.", id);
+            return new ResponseEntity<>(new CustomErrorType("Unable to upate. Cart with id " + id + " not found."),
                     HttpStatus.NOT_FOUND);
         }
 
-        currentUser.setName(user.getName());
-        currentUser.setAge(user.getAge());
+        currentItem.setName(item.getName());
+        currentItem.setQuantity(item.getQuantity());
+        currentItem.setPrice(item.getPrice());
+        currentItem.setImgURL(item.getImgURL());
+        currentItem.setTotalPrice(item.getPrice() * item.getQuantity());
 
-        return new ResponseEntity<>(currentUser, HttpStatus.OK);
+        return new ResponseEntity<>(currentItem, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
-        logger.info("Fetching & Deleting User with id {}", id);
+    @RequestMapping(value = "/cart/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteCart(@PathVariable("id") String id) {
+        logger.info("Fetching & Deleting Cart with id {}", id);
 
-        User currentUser = userService.findById(id);
-        if (!userService.isUserExist(currentUser)) {
-            logger.error("Unable to delete. User with id {} not found.", id);
-            return new ResponseEntity<>(new CustomErrorType("Unable to delete. User with id " + id + " not found."),
+        com.azure.devops.first.model.Item currentItem = cartService.findById(id);
+        if (!cartService.isItemExist(currentItem)) {
+            logger.error("Unable to delete. Cart with id {} not found.", id);
+            return new ResponseEntity<>(new CustomErrorType("Unable to delete. Cart with id " + id + " not found."),
                     HttpStatus.NOT_FOUND);
         }
-        userService.deleteUserById(currentUser);
-        return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+        cartService.deleteCartById(currentItem);
+        return new ResponseEntity<com.azure.devops.first.model.Item>(HttpStatus.NO_CONTENT);
     }
 
 
-    @RequestMapping(value = "/user/", method = RequestMethod.DELETE)
-    public ResponseEntity<User> deleteAllUsers() {
-        logger.info("Deleting All Users");
+    @RequestMapping(value = "/cart/", method = RequestMethod.DELETE)
+    public ResponseEntity<com.azure.devops.first.model.Item> clearCart() {
+        logger.info("Deleting All Carts");
 
-        userService.deleteAllUsers();
+        cartService.ClearAllItems();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
