@@ -47,15 +47,19 @@ public class RestApiController {
 
     @RequestMapping(value = "/cart/", method = RequestMethod.POST)
     public ResponseEntity<?> createCart(@RequestBody com.azure.devops.first.model.Item item, UriComponentsBuilder ucBuilder) {
-        logger.info("Creating Cart : {}", item);
 
         if (cartService.isItemExist(item)) {
-            logger.error("Unable to create. A Cart with name {} already exist", item.getName());
-            return new ResponseEntity<>(new CustomErrorType(
-                    "Unable to create. A Cart with name " +
-                    item.getName() + " already exist."), HttpStatus.CONFLICT);
+            logger.info("A Cart with name {} already exist. Updating the quantity", item.getName());
+            com.azure.devops.first.model.Item currentItem = cartService.findById(item.getId());
+            currentItem.setQuantity(currentItem.getQuantity() + item.getQuantity());
+            currentItem.setTotalPrice(item.getPrice() * currentItem.getQuantity());
+            logger.info("Updating  Cart : {}", currentItem);
+            return new ResponseEntity<>(currentItem, HttpStatus.OK);
         }
+
         item.setTotalPrice(item.getPrice() * item.getQuantity());
+        logger.info("Creating Cart : {}", item);
+
         cartService.saveCart(item);
 
         HttpHeaders headers = new HttpHeaders();
