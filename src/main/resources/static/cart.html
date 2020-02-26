@@ -83,7 +83,6 @@
 					headers:'{Content-Type:"application/json", Accept: "application/json", charset:"UTF-8"}',
 					data:'{"id": "' + json_data.id + '", "name": "' + json_data.name + '", "price":"' + json_data.price + '", "quantity": "' + updatedQuantity + '", "imgURL": "' + json_data.imgURL + '"}',
 					success:function(response_json){
-						alert("item removed and refreshing cart")
 						loadCart()
 					}
 				})

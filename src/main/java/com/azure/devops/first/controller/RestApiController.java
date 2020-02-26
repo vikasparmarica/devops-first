@@ -48,13 +48,18 @@ public class RestApiController {
     @RequestMapping(value = "/cart/", method = RequestMethod.POST)
     public ResponseEntity<?> createCart(@RequestBody com.azure.devops.first.model.Item item, UriComponentsBuilder ucBuilder) {
 
+        if(isQuantityZeroOrLess(item.getQuantity())){
+            logger.info("Not valid quantity for id {}", item.getId());
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
         if (cartService.isItemExist(item)) {
             logger.info("A Cart with name {} already exist. Updating the quantity", item.getName());
             com.azure.devops.first.model.Item currentItem = cartService.findById(item.getId());
 
             if(isQuantityZeroOrLess(currentItem.getQuantity() + item.getQuantity())){
                 cartService.deleteCartById(currentItem);
-                logger.info("Fetching & Deleting Cart with id {}", id);
+                logger.info("Fetching & Deleting Cart with id {}", currentItem.getId());
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 

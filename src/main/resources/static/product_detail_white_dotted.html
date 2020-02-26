@@ -38,8 +38,13 @@
 					dataType:"json",
 					headers:'{Content-Type:"application/json", Accept: "application/json", charset:"UTF-8"}',
 					data:'{"id": "1","name": "White Dotted","price": "587.50","quantity": "' + document.getElementById("quantityField").value + '","imgURL":"themes/images/ladies/1.jpg"}',
-					success:function(response_json){
-						var message = "You have " + response_json.quantity + " " + response_json.name + " in Your Cart"
+					success:function(response_json, textStatus, xhr){
+						var message = ""
+						if(xhr.status == 204){
+							message = "Invalid Quantity"
+						}else{
+							message = "You have " + response_json.quantity + " " + response_json.name + " in Your Cart"
+						}
 						alert(message)
 					}
 				})
