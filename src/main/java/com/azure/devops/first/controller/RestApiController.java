@@ -51,6 +51,13 @@ public class RestApiController {
         if (cartService.isItemExist(item)) {
             logger.info("A Cart with name {} already exist. Updating the quantity", item.getName());
             com.azure.devops.first.model.Item currentItem = cartService.findById(item.getId());
+
+            if(isQuantityZeroOrLess(currentItem.getQuantity() + item.getQuantity())){
+                cartService.deleteCartById(currentItem);
+                logger.info("Fetching & Deleting Cart with id {}", id);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
             currentItem.setQuantity(currentItem.getQuantity() + item.getQuantity());
             currentItem.setTotalPrice(item.getPrice() * currentItem.getQuantity());
             logger.info("Updating  Cart : {}", currentItem);
@@ -76,6 +83,12 @@ public class RestApiController {
                     HttpStatus.NOT_FOUND);
         }
 
+        if(isQuantityZeroOrLess(item.getQuantity())){
+            cartService.deleteCartById(currentItem);
+            logger.info("Fetching & Deleting Cart with id {}", id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
         currentItem.setName(item.getName());
         currentItem.setQuantity(item.getQuantity());
         currentItem.setPrice(item.getPrice());
@@ -83,6 +96,10 @@ public class RestApiController {
         currentItem.setTotalPrice(item.getPrice() * item.getQuantity());
 
         return new ResponseEntity<>(currentItem, HttpStatus.OK);
+    }
+
+    private boolean isQuantityZeroOrLess(int quantity) {
+        return quantity <= 0;
     }
 
     @RequestMapping(value = "/cart/{id}", method = RequestMethod.DELETE)
