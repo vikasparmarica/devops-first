@@ -59,12 +59,8 @@ public class RestApiController {
 
         item.setTotalPrice(item.getPrice() * item.getQuantity());
         logger.info("Creating Cart : {}", item);
-
         cartService.saveCart(item);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/api/cart/{id}").buildAndExpand(item.getId()).toUri());
-        return new ResponseEntity<String>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
 

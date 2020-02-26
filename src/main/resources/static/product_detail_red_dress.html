@@ -38,8 +38,9 @@
 					dataType:"json",
 					headers:'{Content-Type:"application/json", Accept: "application/json", charset:"UTF-8"}',
 					data:'{"id": "2","name": "Red Dress","price": "280","quantity": "' + document.getElementById("quantityField").value + '","imgURL":"themes/images/ladies/2.jpg"}',
-					success:function(responsedata){
-						alert("got response as "+"'"+responsedata+"'");
+					success:function(response_json){
+						var message = "You have " + response_json.quantity + " " + response_json.name + " in Your Cart"
+						alert(message)
 					}
 				})
 		}
