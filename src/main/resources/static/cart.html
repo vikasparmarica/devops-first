@@ -54,7 +54,7 @@
 						document.getElementById("cartItems").innerHTML = txt;
 
 
-						var orderTaxAmount = totalOrderAmount * 0.12
+						var orderTaxAmount = Math.round(totalOrderAmount * 0.12)
 						var finalOrderAmount = totalOrderAmount + orderTaxAmount + 2.00
 						var txt1 = ""
 						txt1 += "<strong>Sub-Total</strong>:	" + totalOrderAmount + " Kr<br>"
