@@ -72,7 +72,7 @@ public class RestApiController {
 
         if (!cartService.isItemExist(currentItem)) {
             logger.error("Unable to update. Cart with id {} not found.", id);
-            return new ResponseEntity<>(new CustomErrorType("Unable to upate. Cart with id " + id + " not found."),
+            return new ResponseEntity<>(new CustomErrorType("Unable to update. Cart with id " + id + " not found."),
                     HttpStatus.NOT_FOUND);
         }
 
