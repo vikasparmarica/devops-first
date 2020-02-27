@@ -41,7 +41,7 @@
         "ports": {
             "value": [
                 {
-                    "port": "80",
+                    "port": "8080",
                     "protocol": "TCP"
                 }
             ]
